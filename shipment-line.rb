@@ -64,3 +64,21 @@ def should_be_numeric input_arr, position, hpos
         input = input_arr[0][position].strip
         raise err_msg input, hpos, "numeric", "Only 0 to 9 values are accepted." unless (input =~ expr) == 0
 end
+
+#       Test if the input in the array at position matches the regular expression for a decimal(dig,dec)
+#       this will also fail if the input is nil
+def should_be_decimal input_arr, position, hpos, dig, dec
+        should_not_be_blank input_arr, position, hpos
+        expr = %r{^\d{0,#{dig}}(?:\.\d{0,#{dec}})?$}
+        input = input_arr[0][position].strip
+        raise err_msg input, hpos, "a valid decimal", "The input should be decimal(#{dig}, #{dec})." unless (input =~ expr) == 0
+end
+
+##      Test if input is char, has the required length and in the given list
+def should_be_in_list input_arr, position, header_position, max_length, accepted_list  
+        unless (should_be_char  input_arr, position, header_position or 
+                        test_max_length input_arr[0][position], $shipment_line_headers[header_position], max_length)
+                arr = accepted_list.split(",")
+                raise "Input of: #{input_arr[0][position]} is not a valid option for #{$shipment_line_headers[header_position]}" unless arr.include? input_arr[0][position].strip
+        end
+end

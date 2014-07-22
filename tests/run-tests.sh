@@ -20,6 +20,6 @@ fi
 
 $PROG -v
 
-#ruby_tester "Email Line Tester" email-line-tester.rb
-#ruby_tester "Manifest Line Tester" manifest-line-tester.rb
+ruby_tester "Email Line Tester" email-line-tester.rb
+ruby_tester "Manifest Line Tester" manifest-line-tester.rb
 ruby_tester "Shipment Line Tester" shipment-line-tester.rb

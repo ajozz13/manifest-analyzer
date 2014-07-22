@@ -113,7 +113,7 @@ def test_manifest_line input_line
         raise "Errors found" unless errors_found.empty?
         @completed = true
   rescue Exception => e
-        puts "Message: #{ e.message }"
+        puts "Manifest Line: #{ e.message }"
         print_array errors_found
         print_manifest_line csv_array 
         puts "Backtrace: #{ e.backtrace }" if $debug

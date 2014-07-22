@@ -366,7 +366,7 @@ def test_shipment_line input_line
                 raise "Errors found" unless errs.compact.empty?
                 @completed = true
         rescue Exception => e
-                puts "Message: #{ e.message }"
+                puts "Shipment Line: #{ e.message }"
                 print_array errs.compact
                 print_shipment_line csv_array
                 puts "Backtrace: #{ e.backtrace }" if $debug

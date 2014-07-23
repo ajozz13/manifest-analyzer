@@ -15,7 +15,9 @@ currently used at IBC for the manifest testing submission tool.
 
 Please keep in mind, that a successful test from this tool, makes it 
 likely that your file submissions will be accepted by the standard 
-IBC Air AMS system.  Please use this software at your own convenience and note
+IBC Air AMS system.
+
+Please use this software at your own convenience and note
 that we make no warranties whatsoever as of the acceptance of your submitted
 manifests, as they will be retested on your regular standard submissions.
 
@@ -28,8 +30,11 @@ JRuby 1.7.12 or later
 For installation instructions please visit their corresponding sites.
 
 https://www.ruby-lang.org/en/
-
 http://www.jruby.org/
+
+To Execute
+---------
+[j]ruby manifest-analyzer.rb -f _PATH_TO_TEST_FILE
 
 For questions or inquiries please email us directly at it@ibcinc.com.
 

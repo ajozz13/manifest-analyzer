@@ -14,7 +14,7 @@ The Project is written in Ruby, and it is the same testing framework
 currently used at IBC for the manifest testing submission tool.
 
 Please keep in mind, that a successful test from this tool, makes it 
-likely that your file submissions will be accepted by the standar 
+likely that your file submissions will be accepted by the standard 
 IBC Air AMS system.  Please use this software at your own convenience and note
 that we make no warranties whatsoever as of the acceptance of your submitted
 manifests, as they will be retested on your regular standard submissions.

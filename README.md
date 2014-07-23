@@ -8,7 +8,7 @@ This project is intended for IBC customers and developers seeking to
 test their Air AMS import manifests for use with the IBC Air AMS system.
 
 The format of the manifest file is fully documented in this link:
-http://www.pactrak.com/manifest-to-pactrak.html
+http://www.pactrak.com/manifest-to-pactrak.html.
 
 The Project is written in Ruby, and it is the same testing framework 
 currently used at IBC for the manifest testing submission tool.
@@ -26,11 +26,13 @@ or
 JRuby 1.7.12 or later
 
 For installation instructions please visit their corresponding sites.
+
 https://www.ruby-lang.org/en/
+
 http://www.jruby.org/
 
-For questions or inquiries
-please email us directly at it@ibcinc.com
+For questions or inquiries please email us directly at it@ibcinc.com.
 
 Best Regards
+
 Alberto Ochoa

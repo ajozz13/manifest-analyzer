@@ -11,7 +11,7 @@ require 'csv'
 $manifest_line_headers = [ "record_type", "man_code", "man_date", "man_origin", "man_dest", "flight_info", "man_info" ]
 $airline_regex = %r{\A[A-Z]{2}\d{3,4}\z}
 $ibc_date_format = "%Y%m%d"
-$debug = false
+$debug = true
 
 #	Functions
 def print_array arr
@@ -29,7 +29,7 @@ def print_manifest_line input_array
 end
 
 ##      Test the max length of a String and fail if it's empty
-def test_max_length input_str, name, max_size
+def test_man_max_length input_str, name, max_size
 	raise "The value for #{name} is empty." if input_str.nil?
 	input_str.length <= max_size
 end
@@ -81,7 +81,7 @@ def test_manifest_line input_line
                 end
 
                 ##Simple tests for length
-                unless test_max_length csv_array[0][1], "manifest code", 15  #maxlength for man_code is 15 
+                unless test_man_max_length( csv_array[0][1], "manifest code", 15 ) #maxlength for man_code is 15 
                         errors_found.push "Manifest code: #{csv_array[0][1]} exceeds the maximum limit"
                 end
 
@@ -90,11 +90,11 @@ def test_manifest_line input_line
                         errors_found.push "Date given: #{csv_array[0][2]} may be invalid or not in format expected: YYYYmmDD"
                 end
 
-                unless test_max_length csv_array[0][3], "origin code", 3  #maxlength for origin_code is 3 
+                unless test_man_max_length( csv_array[0][3], "origin code", 3 ) #maxlength for origin_code is 3 
                         errors_found.push "Origin code: #{csv_array[0][3]} exceeds the maximum limit"
                 end
 
-                unless test_max_length csv_array[0][4], "destination code", 3  #maxlength for destination_code is 3 
+                unless test_man_max_length( csv_array[0][4], "destination code", 3 ) #maxlength for destination_code is 3 
                         errors_found.push "Destination code: #{csv_array[0][4]} exceeds the maximum limit"
                 end
 
@@ -132,6 +132,7 @@ puts "Begin Test Program"
 input_lines = []
 input_lines.push "1,abc12345,20140701,YYZ,MIA,AA2012,18062148741"
 input_lines.push "1,abc12345,,YYZX,MIA,AASS2012,AB221111"
+input_lines.push "1,DXBTMA0003,20140719,DXB,TMA,EK0510,31901001313"
 
 
 input_lines.each_with_index do |l, index|

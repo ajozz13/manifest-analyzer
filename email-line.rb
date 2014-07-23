@@ -36,7 +36,7 @@ end
 #       Simple function to test the email address
 def valid_email? email_address
         puts "Test address: #{email_address}" if $debug
-        return ( email_address =~ $email_regex ) == 0
+        return ( email_address.strip =~ $email_regex ) == 0
 end
 
 #       main function to call passing the email line

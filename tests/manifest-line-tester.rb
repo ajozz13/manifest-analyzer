@@ -15,25 +15,25 @@ $test_array = [ 'William Buckley', 'Short', nil ]
 
 class ManifestLineTester < Test::Unit::TestCase	
 	##Test function text_max_length  - text_max_length input_string, Name_of_column, maximum_length_allowed
-	def test_max_length_should_be_false
+	def test_man_max_length_should_be_false
 		max_length = 2
 		print_this $test_array[ 0 ], "should not exceed #{ max_length }"
-		assert_equal false, test_max_length( $test_array[ 0 ], "TestString", max_length ) 
+		assert_equal false, test_man_max_length( $test_array[ 0 ], "TestString", max_length ) 
 		puts
 	end
 	
-	def test_max_length_should_be_true
+	def test_man_max_length_should_be_true
 		max_length = 7
 		print_this $test_array[ 1 ], "should not exceed #{ max_length }"
-		assert_equal true, test_max_length( $test_array[ 1 ], "TestString", max_length )
+		assert_equal true, test_man_max_length( $test_array[ 1 ], "TestString", max_length )
 		puts 
 	end
 	
-	def test_max_length_throws_exception
+	def test_man_max_length_throws_exception
 		max_length = 10
 		print_this "'#{ $test_array[ 2 ] }'", "should not exceed #{ max_length } but is nil."
 		ex = assert_raises(RuntimeError) {
-			test_max_length( $test_array[ 2 ], "TestString", max_length )
+			test_man_max_length( $test_array[ 2 ], "TestString", max_length )
 		}
 		print_this "The message: '#{ ex.message }'", "is returned from the exception."
 		assert_equal( "The value for TestString is empty.", ex.message )

@@ -40,7 +40,7 @@ begin
                         when "8","9"
                                 run_test{ test_shipment_line line }
                         else
-                                raise "There is a line that does not belong"
+                                raise "There is an issue processing this line\n[#{ line }]"
                 end
                 puts "Stop? #{ stop_processing } Pause Testing? #{ $errors_count > 0 }" if $debug
                 raise "Stop Processing. Total errors #{ $errors_count }" if stop_processing  && $errors_count > 0

@@ -29,9 +29,13 @@ end
 
 ##      Print the fields with the entries that where read into the input array
 def print_shipment_line input_array
-        $shipment_line_headers.each_with_index do |header, index|
-                puts "#{ header } = #{ input_array[0][ index ] }"
-        end
+        @counter = 0
+        e_line = input_array[0][0].eql? "8"
+        for i in 0..$shipment_line_headers.length - 1
+                next if e_line and i == 18
+                puts "#{ @counter+1 }) #{ $shipment_line_headers[i] } = #{ input_array[0][ @counter ]}"
+                @counter += 1 
+        end  
         puts
 end
 

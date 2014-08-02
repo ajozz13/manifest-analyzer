@@ -65,9 +65,9 @@ def should_be_blank input_arr, position, hpos
 end
 
 ##      The input array at position should not be blank
-def should_not_be_blank input_arr, position, hpos
+def should_not_be_blank input_arr, position, hpos, reason=""
 	raise err_msg input_arr[0][position], hpos, "filled out",
-		"The input for this field should not be empty." if input_arr[0][position].nil? || input_arr[0][position].strip.empty?
+		"The input for this field should not be empty. #{reason}" if input_arr[0][position].nil? || input_arr[0][position].strip.empty?
 end
 
 ##      The input array at position should only contains characters
@@ -205,8 +205,12 @@ def test_shipment_line input_line
 
                         ##insurance_amount decimal(9,2)
                         errs.push perform_and_capture{ should_be_decimal csv_array, 16, 16, 9, 2 } unless csv_array[0][16].nil?
+                        
                         #description char20
                         errs.push perform_and_capture{ test_max_length csv_array[0][17], $shipment_line_headers[17], 20 }
+                        if csv_array[0][14].eql? "APX"  ##description should not be blank.
+                                errs.push perform_and_capture{ should_not_be_blank csv_array, 17, 17, "APX Document type detected." }
+                        end
 
                         #harmonized_code char10 Only on line 9 lines
                         errs.push perform_and_capture{ test_max_length csv_array[0][18], $shipment_line_headers[18], 10 } unless @line_type

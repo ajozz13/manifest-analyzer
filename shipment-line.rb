@@ -184,9 +184,11 @@ def test_shipment_line input_line
 
                         ##num_pieces decimal(3,0)
                         errs.push perform_and_capture{ should_be_decimal csv_array, 11, 11, 3, 0 }
+                        errs.push "num_pieces should be at least 1" if ( csv_array[0][11].to_f < 1 )
   
                         ##weight decimal 
                         errs.push perform_and_capture{ should_be_decimal csv_array, 12, 12, 7, 2 }
+                        errs.push "weight should be greater than 0" unless ( csv_array[0][12].to_f > 0 )
 
                         ##weight_unit
                         errs.push perform_and_capture{ should_be_in_list csv_array, 13, 13, 1, "P,K,G" }

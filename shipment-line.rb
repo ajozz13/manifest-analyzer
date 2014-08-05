@@ -49,7 +49,7 @@ end
 
 ##      Test max length but fail if input is null
 def test_nil_and_length input_str, name, max_size
-        raise "Input of #{name} can not be blank." if input_str.nil?
+        raise "Input of #{name} can not be blank." if input_str.nil? || input_str.strip.empty?
         test_max_length input_str, name, max_size
 end
 
@@ -277,12 +277,12 @@ def test_shipment_line input_line
                         ##SHIPPER INFO
 
                         #shipper_name char30
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], $shipment_line_headers[@header_pos], 30 }
+                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], $shipment_line_headers[@header_pos], 30 }
                         @position += 1
                         @header_pos += 1
 
                         #shipper_address1 char25
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], $shipment_line_headers[@header_pos], 25 }
+                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], $shipment_line_headers[@header_pos], 25 }
                         @position += 1
                         @header_pos += 1
 
@@ -292,7 +292,7 @@ def test_shipment_line input_line
                         @header_pos += 1
 
                         #shipper_city char25
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], $shipment_line_headers[@header_pos], 25 }
+                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], $shipment_line_headers[@header_pos], 25 }
                         @position += 1
                         @header_pos += 1
 
@@ -307,7 +307,7 @@ def test_shipment_line input_line
                         @header_pos += 1
 
                         #shipper_country char2 FOR AAMS
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], $shipment_line_headers[@header_pos], 2 }
+                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], $shipment_line_headers[@header_pos], 2 }
                         @position += 1 
                         @header_pos += 1      
 
@@ -320,11 +320,14 @@ def test_shipment_line input_line
 
                         #con_person char35
                         errs.push perform_and_capture{ test_max_length csv_array[0][@position], $shipment_line_headers[@header_pos], 35 }
+                        con_name = csv_array[0][@position].to_s.strip
                         @position += 1
                         @header_pos += 1
 
                         #con_company char35
                         errs.push perform_and_capture{ test_max_length csv_array[0][@position], $shipment_line_headers[@header_pos], 35 }
+                        con_comp = csv_array[0][@position].to_s.strip
+                        errs.push "You must supply either a name( con_name ) or a company( con_company ) for the Consignee." if con_name.empty? and con_comp.empty?
                         @position += 1
                         @header_pos += 1
 
@@ -339,7 +342,7 @@ def test_shipment_line input_line
                         @header_pos += 1
 
                         #con_city char35
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], $shipment_line_headers[@header_pos], 35 }
+                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], $shipment_line_headers[@header_pos], 35 }
                         @position += 1
                         @header_pos += 1
 
@@ -354,8 +357,7 @@ def test_shipment_line input_line
                         @header_pos += 1
 
                         #con_country char2 FOR AAMS
-                        errs.push perform_and_capture{ should_not_be_blank csv_array, @position, @header_pos }
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], $shipment_line_headers[@header_pos], 2 }
+                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], $shipment_line_headers[@header_pos], 2 }
                         @position += 1 
                         @header_pos += 1
 

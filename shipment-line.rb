@@ -198,7 +198,7 @@ def test_shipment_line input_line
 
                         ##value should be null or 0 if DOC
                         if csv_array[0][14].eql? "DOC"
-                                errs.push "Value should be 0 or blank for DOC entries. value: #{csv_array[0][15]}" if (Integer(csv_array[0][15]) > 0) unless csv_array[0][15].nil?
+                                errs.push "Value should be 0 or blank for DOC entries. value: #{csv_array[0][15]}" if ( (csv_array[0][15]).to_i > 0) unless csv_array[0][15].nil?
                         else
                                 ##value decimal(7,0)
                                 errs.push "Value should not be less than 1 or blank for APX" if csv_array[0][15].nil? or (csv_array[0][15].to_f < 1)
@@ -246,7 +246,7 @@ def test_shipment_line input_line
                                 if csv_array[0][@position].nil?
                                         errs.push "The terms are Collect, and the value data supplied collect_amount is empty."
                                 else
-                                        errs.push "Value should be numeric and greater than 0. value: #{csv_array[0][@position]}" unless (csv_array[0][@position].to_f > 0)
+                                        errs.push "Collect value should be numeric and greater than 0. collect value: #{csv_array[0][@position]}" unless (csv_array[0][@position].to_f > 0)
                                         errs.push perform_and_capture{ should_be_decimal csv_array, @position, @header_pos, 7, 2 }
                                 end
                         else

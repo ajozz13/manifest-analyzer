@@ -61,7 +61,7 @@ end
 ##      The input of array at position should be blank
 def should_be_blank input_arr, position, hpos
         raise err_msg input_arr[0][position], hpos, "null", 
-                "Null fields are represented by two adjacent commas (,,)." unless input_arr[0][position].nil?
+                "Null fields are represented by two adjacent commas (,,)." unless input_arr[0][position].to_s.strip.empty?
 end
 
 ##      The input array at position should not be blank

@@ -34,16 +34,16 @@ begin
         man_line_counter = 0
         ship_line_counter = 0
         f.each_line do |line|
-                puts "Test #{ line }" if $debug
-                case line[ 0 ]
+                puts "Test #{ line } : #{ line[ 0..1 ] }" if $debug
+                case line[ 0..1 ]
 
-                        when "1"
+                        when "1,"
                                 run_test{ test_manifest_line line }
                                 man_line_detected = true
                                 man_line_counter += 1
-                        when "6","7"                
+                        when "6,","7,"                
                                 run_test{ test_email_line line }
-                        when "8","9"
+                        when "8,","9,","10"
                                 run_test{ test_shipment_line line }
                                 man_line_detected = false if man_line_detected
                                 ship_line_counter += 1

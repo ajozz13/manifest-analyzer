@@ -6,6 +6,9 @@
 ##      requirements
 require 'csv'
 
+##	save the last line tested
+$last_line_tested
+
 ##      Global Variables
 $shipment_line_headers = ["record_type", "profile_key", "hawb", "ship_ref_num", "second_ship_ref", 
   "vend_ref_num", "origin", "final_dest", "outlying", "dls_station", "dls_final_dest", "num_pieces",
@@ -34,10 +37,15 @@ end
 def print_shipment_line input_array, headers_array
         @counter = 0
         #for i in 0..$shipment_line_headers.length - 1    
-	for i in 0..headers_array.length - 1               
-		puts "#{ @counter+1 }) #{ headers_array[ i ] } = #{ input_array[0][ @counter ]}"
-		@counter += 1 
-        end  
+	begin
+		for i in 0..headers_array.length - 1               
+			puts "#{ @counter+1 }) #{ headers_array[ i ] } = #{ input_array[0][ @counter ]}"
+			@counter += 1 
+		end  
+	rescue Exception => e
+		puts "Line tested: #{ $last_line_tested }"
+		puts "Backtrace: #{ e.backtrace }"
+	end	
         puts
 end
 
@@ -125,6 +133,7 @@ end
 ##      Main function to call when tests are made
 ##      Unit tested with Test program below
 def test_shipment_line input_line
+	$last_line_tested = input_line
         errs = []
 	headers = $shipment_line_headers.dup
         begin

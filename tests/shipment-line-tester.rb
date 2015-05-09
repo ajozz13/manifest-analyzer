@@ -54,7 +54,7 @@ class ShipmentLineTester < Test::Unit::TestCase
         def test_err_msg_returns_specific_message
                 print_this "err_msg function", "should return a specific message" 
                 assert_equal( "Input for hawb: 'test_item' should be a house bill. Keep trying.", 
-                                err_msg( "test_item", 2, "a house bill", "Keep trying." ) ) 
+                                err_msg( "test_item", "hawb", "a house bill", "Keep trying." ) ) 
         end
 
         ##      Test should_be_blank input_arr, position, hpos
@@ -62,10 +62,10 @@ class ShipmentLineTester < Test::Unit::TestCase
 		input = $test_array[ 2 ]
 		print_this "'#{ input }'", "should raise exception since we are expecting a field to be blank."
 		ex = assert_raises(RuntimeError) {
-			should_be_blank( $test_array, 2, 8 ) ## hpos is the position of the header item
+			should_be_blank( [$test_array], 5, "outlying" ) ## hpos is the position of the header item
 		}
 		print_this "The message: '#{ ex.message }'", "is returned from the exception."
-		assert_equal( "Input for outlying: '2' should be null. Null fields are represented by two adjacent commas (,,).", 
+		assert_equal( "Input for outlying: 'Milton Friedman.' should be null. Null fields are represented by two adjacent commas (,,).", 
                         ex.message )
 		puts
 	end

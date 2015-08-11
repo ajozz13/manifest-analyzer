@@ -1,6 +1,6 @@
-=begin	
+=begin
 	This is a test file script for a Shipment line.  The IBC standard shipment line is specified in
-	http://www.pactrak.com/manifest-to-pactrak.html.  We will test a sub-standard that 
+	http://www.pactrak.com/manifest-to-pactrak.html.  We will test a sub-standard that
 	will support a HTTP rest driven approach, to submit and create the IBC standard format.
 =end
 ##      requirements
@@ -10,7 +10,7 @@ require 'csv'
 $last_line_tested
 
 ##      Global Variables
-$shipment_line_headers = ["record_type", "profile_key", "hawb", "ship_ref_num", "second_ship_ref", 
+$shipment_line_headers = ["record_type", "profile_key", "hawb", "ship_ref_num", "second_ship_ref",
   "vend_ref_num", "origin", "final_dest", "outlying", "dls_station", "dls_final_dest", "num_pieces",
   "weight", "weight_unit", "contents", "value", "insurance_amount", "description",
   "fda_prior_notice", "terms", "packaging", "service_type", "collect_amount", "cust_key",
@@ -36,23 +36,23 @@ end
 ##      Print the fields with the entries that where read into the input array
 def print_shipment_line input_array, headers_array
         @counter = 0
-        #for i in 0..$shipment_line_headers.length - 1    
+        #for i in 0..$shipment_line_headers.length - 1
 	begin
-		for i in 0..headers_array.length - 1               
+		for i in 0..headers_array.length - 1
 			puts "#{ @counter+1 }) #{ headers_array[ i ] } = #{ input_array[0][ @counter ]}"
-			@counter += 1 
-		end  
+			@counter += 1
+		end
 	rescue Exception => e
 		puts "Line tested: #{ $last_line_tested }"
 		puts "Backtrace: #{ e.backtrace }"
-	end	
+	end
         puts
 end
 
 ##      Tests that apply to the shipment lines  ##All unit tested in tests directory
 ##      test max length of string it is OK if input is null
 def test_max_length input_str, name, max_size
-        unless input_str.nil?    
+        unless input_str.nil?
                 raise "The input of #{name}: '#{input_str}', exceeds the maximum length: #{max_size}." if input_str.strip.length > max_size
         end
 end
@@ -70,7 +70,7 @@ end
 
 ##      The input of array at position should be blank
 def should_be_blank input_arr, position, hpos
-        raise err_msg input_arr[0][position], hpos, "null", 
+        raise err_msg input_arr[0][position], hpos, "null",
                 "Null fields are represented by two adjacent commas (,,)." unless input_arr[0][position].to_s.strip.empty?
 end
 
@@ -106,11 +106,11 @@ def should_be_decimal input_arr, position, hpos, dig, dec
 end
 
 ##      Test if input is char, has the required length and in the given list
-def should_be_in_list input_arr, position, header, max_length, accepted_list  
-        unless (should_be_char input_arr, position, header or 
+def should_be_in_list input_arr, position, header, max_length, accepted_list
+        unless (should_be_char input_arr, position, header or
                         test_max_length input_arr[0][position], header, max_length)
                 arr = accepted_list.split(",")
-                raise "Input of: #{input_arr[0][position]} is not a valid option for #{header}" unless arr.include? input_arr[0][position].strip
+                raise "Input of: '#{input_arr[0][position]}' is not a valid option for #{ $shipment_line_headers[ header ] }" unless arr.include? input_arr[0][position].strip
         end
 end
 
@@ -139,13 +139,13 @@ def test_shipment_line input_line
         begin
                 csv_array = CSV.parse( input_line )
                 print_array csv_array if $debug
-		
+
 		lt = Integer( csv_array[0][0] )
-		
+
 		if lt >= 9
 			headers.insert 18, $shipment_line_9_header
 			headers.insert 9, $shipment_line_10_header if lt >= 10
-		end 
+		end
 		puts "headers #{ $shipment_line_headers.length  } : #{ headers.length }" if $debug
 		#print_shipment_line csv_array, headers
 
@@ -156,7 +156,7 @@ def test_shipment_line input_line
                                       "for a type #{csv_array[0][0]} line (#{$line_type[ csv_array[0][0] ]}). "
                         end
 			# headers.length == 45 is 8,  headers.length == 46 is 9  headers.length == 47 is 10
-                        @line_eight = lt.eql? 8 
+                        @line_eight = lt.eql? 8
 
                         ##BEGIN LINE TEST
                         ##profile_key
@@ -164,22 +164,22 @@ def test_shipment_line input_line
 
                         ##hawb  numeric and maxlength of 11
                         errs.push perform_and_capture{ should_be_numeric csv_array, 2, headers[2] or test_nil_and_length csv_array[0][2], headers[2], 11 }
-                     
+
                         #ship_ref_num max_length 11
                         errs.push perform_and_capture{ test_max_length csv_array[0][3], headers[3], 11 }
- 
+
                         #second_ship_ref
                         errs.push perform_and_capture{ test_max_length csv_array[0][4], headers[4], 22 }
-  
+
                         #vend_ref_num
                         errs.push perform_and_capture{ test_max_length csv_array[0][5], headers[5], 22 }
-  
+
                         #origin 3 letter char
                         errs.push perform_and_capture{ should_be_char csv_array, 6, headers[6] or test_max_length csv_array[0][6], headers[6], 3 }
 
                         #final_dest 3 letter char
                         errs.push perform_and_capture{ should_be_char  csv_array, 7, headers[7] or test_max_length csv_array[0][7], headers[7], 3 }
-                        
+
                         #outlying X or nil
                         errs.push perform_and_capture{ test_max_length csv_array[0][8], headers[8], 1 }
 
@@ -192,13 +192,13 @@ def test_shipment_line input_line
                         @header_pos += 1
 			end
 
-			
-                        #dls_station 
+
+                        #dls_station
                         errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
                         @position += 1
                         @header_pos += 1
-                        
-                        #dls_final_dest                        
+
+                        #dls_final_dest
                         errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
                         @position += 1
                         @header_pos += 1
@@ -208,7 +208,7 @@ def test_shipment_line input_line
                         errs.push "num_pieces should be at least 1" if ( csv_array[0][@position].to_f < 1 )
                         @position += 1
                         @header_pos += 1
-                        ##weight decimal 
+                        ##weight decimal
                         errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 7, 2 }
                         errs.push "weight should be greater than 0" unless ( csv_array[0][@position].to_f > 0 )
                         @position += 1
@@ -239,9 +239,9 @@ def test_shipment_line input_line
                         errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 9, 2 } unless csv_array[0][@position].nil?
                         @position += 1
                         @header_pos += 1
-                        
-                        #description char20
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 20 }
+
+                        #description char200
+                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 200 }
                         if csv_array[0][14].eql? "APX"  ##description should not be blank.
                                 errs.push perform_and_capture{ should_not_be_blank csv_array, @position, headers[@header_pos], "APX Document type detected." }
                         end
@@ -250,7 +250,7 @@ def test_shipment_line input_line
 
 			unless @line_eight
                         	#harmonized_code char10 Only on line 9 lines
-                        	errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 10 } 
+                        	errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 10 }
         	                @position += 1
 	                        @header_pos += 1
 			end
@@ -265,7 +265,7 @@ def test_shipment_line input_line
 
                         #terms
                         errs.push perform_and_capture{ should_be_in_list csv_array, @position, @header_pos, 1, "P,C,S,F" }
-                        @position += 1 
+                        @position += 1
                         @header_pos += 1
 
                         #packaging
@@ -275,10 +275,10 @@ def test_shipment_line input_line
 
                         #service_type
                         errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 2 }
-                        @position += 1 
+                        @position += 1
                         @header_pos += 1
 
-                        #collect_amount should only appear if terms (@position - 3) is C 
+                        #collect_amount should only appear if terms (@position - 3) is C
                         if csv_array[0][@position - 3].eql? "C"
                                 if csv_array[0][@position].nil?
                                         errs.push "The terms are Collect, and the value data supplied collect_amount is empty."
@@ -290,17 +290,17 @@ def test_shipment_line input_line
                                 #collect_amount when terms are not C
                                 errs.push perform_and_capture{ should_be_blank csv_array, @position, @header_pos }
                         end
-                        @position += 1 
-                        @header_pos += 1      
+                        @position += 1
+                        @header_pos += 1
 
                         #cust_key should be blank
                         errs.push perform_and_capture{ should_be_blank csv_array, @position, @header_pos }
                         @position += 1
-                        @header_pos += 1	 
+                        @header_pos += 1
 
                         #ship_acct_num char4 Position 25 (if line 9)
                         errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 4 }
-                        @position += 1 
+                        @position += 1
                         @header_pos += 1
 
                         #dls_acct_num blank
@@ -342,17 +342,17 @@ def test_shipment_line input_line
 
                         #shipper_zip char10
                         errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 10 }
-                        @position += 1 
+                        @position += 1
                         @header_pos += 1
 
                         #shipper_country char2 FOR AAMS
                         errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 2 }
-                        @position += 1 
-                        @header_pos += 1      
+                        @position += 1
+                        @header_pos += 1
 
                         #shipper_phone char15
                         errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 15 }
-                        @position += 1 
+                        @position += 1
                         @header_pos += 1
 
                         ##CONSIGNEE INFO
@@ -387,22 +387,22 @@ def test_shipment_line input_line
 
                         #con_state char20
                         errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 20 }
-                        @position += 1 
+                        @position += 1
                         @header_pos += 1
 
                         #con_postal_code char20
                         errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 20 }
-                        @position += 1 
+                        @position += 1
                         @header_pos += 1
 
                         #con_country char2 FOR AAMS
                         errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 2 }
-                        @position += 1 
+                        @position += 1
                         @header_pos += 1
 
                         #con_phone char20
                         errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 20 }
-                        @position += 1 
+                        @position += 1
                         @header_pos += 1
 
                         #comments char512
@@ -420,7 +420,7 @@ def test_shipment_line input_line
 		puts "---------------------------------"
                 print_shipment_line csv_array, headers
                 puts "Backtrace: #{ e.backtrace }" if $debug
-                @completed = false 
+                @completed = false
         end
 end
 
@@ -457,4 +457,4 @@ puts "-------------------------"
 
 puts "End Program"
 ##End Test Program
-=end       
+=end

@@ -415,13 +415,35 @@ def test_shipment_line input_line
                 @completed = true
 
         rescue Exception => e
-                puts "Shipment Line: #{ e.message }"
+                puts "Shipment Line Issue: #{ e.message }"
                 print_array errs.compact
 		puts "---------------------------------"
                 print_shipment_line csv_array, headers
                 puts "Backtrace: #{ e.backtrace }" if $debug
                 @completed = false
         end
+end
+
+##	Accept an array of entries and test them
+##	return a count of the lines that failed
+def test_entries entries_string
+	count = 0
+	entries_string.split("\n").each_with_index do | line, index |
+		count = count + run_test( index) { test_shipment_line line } 
+	end
+	return count
+end
+
+##	Perform the line test and report back if the test failed with a 1 or if it passed 
+def run_test index
+	passed = yield
+	puts "Line #{ index + 1 } did not pass validation" unless passed
+	puts "-----------------------------------------------------" unless passed
+	return passed ? 0 : 1
+end
+
+def report_last_line_tested
+	return "#{ $last_line_tested }"
 end
 
 ##      Run Test for test_shipment_line function

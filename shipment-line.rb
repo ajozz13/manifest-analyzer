@@ -264,12 +264,12 @@ def test_shipment_line input_line
                         @header_pos += 1
 
                         #terms
-                        errs.push perform_and_capture{ should_be_in_list csv_array, @position, @header_pos, 1, "P,C,S,F" }
+                        errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos], 1, "P,C,S,F" }
                         @position += 1
                         @header_pos += 1
 
                         #packaging
-                        errs.push perform_and_capture{ should_be_in_list csv_array, @position, @header_pos,1, "L,P,B,T,C,M,O" }
+                        errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos],1, "L,P,B,T,C,M,O" }
                         @position += 1
                         @header_pos += 1
 
@@ -284,17 +284,17 @@ def test_shipment_line input_line
                                         errs.push "The terms are Collect, and the value data supplied collect_amount is empty."
                                 else
                                         errs.push "Collect value should be numeric and greater than 0. collect value: #{csv_array[0][@position]}" unless (csv_array[0][@position].to_f > 0)
-                                        errs.push perform_and_capture{ should_be_decimal csv_array, @position, @header_pos, 7, 2 }
+                                        errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 7, 2 }
                                 end
                         else
                                 #collect_amount when terms are not C
-                                errs.push perform_and_capture{ should_be_blank csv_array, @position, @header_pos }
+                                errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
                         end
                         @position += 1
                         @header_pos += 1
 
                         #cust_key should be blank
-                        errs.push perform_and_capture{ should_be_blank csv_array, @position, @header_pos }
+                        errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
                         @position += 1
                         @header_pos += 1
 
@@ -304,12 +304,12 @@ def test_shipment_line input_line
                         @header_pos += 1
 
                         #dls_acct_num blank
-                        errs.push perform_and_capture{ should_be_blank csv_array, @position, @header_pos }
+                        errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
                         @position += 1
                         @header_pos += 1
 
                         #ext_cust_acct blank
-                        errs.push perform_and_capture{ should_be_blank csv_array, @position, @header_pos }
+                        errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
                         @position += 1
                         @header_pos += 1
 

@@ -191,6 +191,36 @@ class ShipmentLineTester < Test::Unit::TestCase
                 end
 		puts
         end
+				
+      def test_input_is_numeric_and_length_throws_exception
+                
+                input_list = [ ['2040608011111','12345678911a1'] ]             
+			max_length = 12
+			(0..1).each do |num|
+                        input = input_list[0][ num ]
+			print_this "'#{ input }'", "length should be #{ max_length } and be numeric."
+		        assert_raises(RuntimeError) {
+			        test_input_is_numeric_and_length( input_list, num ,'fda_prior_notice', max_length  )
+		        }
+			end
+						
+		puts
+        end	
+				
+	   def test_input_is_numeric_and_length_works
+                
+                input_list = [ ['204060801111','123456789111'] ]             
+			max_length = 12
+			(0..1).each do |num|
+                        input = input_list[0][ num ]
+			print_this "'#{ input }'", "length should be #{ max_length } and be numeric."
+		        assert_nothing_raised(RuntimeError) {
+			        test_input_is_numeric_and_length( input_list, num ,'fda_prior_notice', max_length  )
+		        }
+			end
+						
+		puts
+        end			
 end	
 
 

@@ -9,7 +9,7 @@ require 'csv'
 
 #	Global variables
 $manifest_line_headers = [ "record_type", "man_code", "man_date", "man_origin", "man_dest", "flight_info", "man_info" ]
-$airline_regex = %r{\A[A-Z]{2}\d{3,4}\z}
+$airline_regex = %r{\A[A-Z]{1,}\d{3,6}\z}
 $ibc_date_format = "%Y%m%d"
 $debug = true
 

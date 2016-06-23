@@ -200,7 +200,7 @@ class ShipmentLineTester < Test::Unit::TestCase
                         input = input_list[0][ num ]
 			print_this "'#{ input }'", "length should be #{ max_length } and be numeric."
 		        assert_raises(RuntimeError) {
-			        test_input_is_numeric_and_length( input_list, num ,'fda_prior_notice', max_length  )
+			        test_input_is_numeric_and_length( input_list, num ,'fda_prior_notice', max_length, 10  )
 		        }
 			end
 						
@@ -215,7 +215,7 @@ class ShipmentLineTester < Test::Unit::TestCase
                         input = input_list[0][ num ]
 			print_this "'#{ input }'", "length should be #{ max_length } and be numeric."
 		        assert_nothing_raised(RuntimeError) {
-			        test_input_is_numeric_and_length( input_list, num ,'fda_prior_notice', max_length  )
+			        test_input_is_numeric_and_length( input_list, num ,'fda_prior_notice', max_length )
 		        }
 			end
 						

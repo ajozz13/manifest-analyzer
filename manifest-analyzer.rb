@@ -43,7 +43,7 @@ begin
                                 man_line_counter += 1
                         when "6,","7,"                
                                 run_test{ test_email_line line }
-                        when "8,","9,","10"
+                        when "8,","9,","10", "11", "12"
                                 run_test{ test_shipment_line line }
                                 man_line_detected = false if man_line_detected
                                 ship_line_counter += 1

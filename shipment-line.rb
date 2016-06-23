@@ -21,9 +21,11 @@ $shipment_line_headers = ["record_type", "profile_key", "hawb", "ship_ref_num", 
 
 $shipment_line_9_header = "harmonized_code"
 $shipment_line_10_header = "service_provider"
+$shipment_line_11_header = "currency_code"
+$shipment_line_12_header = "con_tax_id"
 
 #       Record the number of expected items in the end array.
-$line_type = { "8"=> 45, "9"=> 46, "10" => 47 }
+$line_type = { "8"=> 45, "9"=> 46, "10" => 47, "11" => 48, "12" => 49 }
 $debug = false
 
 #       print an array with index
@@ -55,6 +57,13 @@ def test_max_length input_str, name, max_size
         unless input_str.nil?
                 raise "The input of #{name}: '#{input_str}', exceeds the maximum length: #{max_size}." if input_str.strip.length > max_size
         end
+end
+
+##	Test that the length of an item is exactly
+def test_input_is_numeric_and_length input_arr, position, hpos, *expected_lengths
+	should_be_numeric  input_arr, position, hpos
+	input = input_arr[0][ position ]
+	raise err_msg input, hpos, "have the correct length", "The input should be numeric and have a length(s) of #{ expected_lengths }." unless expected_lengths.include? input.length
 end
 
 ##      Test max length but fail if input is null
@@ -145,12 +154,14 @@ def test_shipment_line input_line
 		if lt >= 9
 			headers.insert 18, $shipment_line_9_header
 			headers.insert 9, $shipment_line_10_header if lt >= 10
+			headers.insert 16, $shipment_line_11_header if lt >= 11
+			headers.insert 47, $shipment_line_12_header if lt >= 12
 		end
 		puts "headers #{ $shipment_line_headers.length  } : #{ headers.length }" if $debug
 		#print_shipment_line csv_array, headers
 
                 puts "Size is #{csv_array[0].size}" if $debug
-                if lt.between?(8,10)  #(8..9).member?(Integer( csv_array[0][0] ))
+                if lt.between?(8,12)  
                         unless confirm_line_size csv_array[0]
                                 raise "Size of input line (#{csv_array[0].size}) does not match expected size " \
                                       "for a type #{csv_array[0][0]} line (#{$line_type[ csv_array[0][0] ]}). "
@@ -185,7 +196,7 @@ def test_shipment_line input_line
 
 			@position = 9
 			@header_pos = 9
-			if lt.eql? 10  #headers.length == 47
+			if lt >= 10  #headers.length == 47
 				#service_provider 3 letter char
                         	errs.push perform_and_capture{ should_be_char csv_array, @position, headers[@header_pos] or test_max_length csv_array[0][@position], headers[@header_pos], 3 } unless csv_array[0][@position].nil?
                         @position += 1
@@ -208,7 +219,8 @@ def test_shipment_line input_line
                         errs.push "num_pieces should be at least 1" if ( csv_array[0][@position].to_f < 1 )
                         @position += 1
                         @header_pos += 1
-                        ##weight decimal
+                        
+				  ##weight decimal
                         errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 7, 2 }
                         errs.push "weight should be greater than 0" unless ( csv_array[0][@position].to_f > 0 )
                         @position += 1
@@ -223,7 +235,13 @@ def test_shipment_line input_line
                         errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos], 3, "DOC,APX" }
                         @position += 1
                         @header_pos += 1
-
+												
+				if lt >= 11  #headers.length == 48
+					##currency_code
+				   errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 3 } unless csv_array[0][@position].nil?
+                        @position += 1
+                        @header_pos += 1
+				end
                         ##value should be null or 0 if DOC
                         if csv_array[0][@position - 1].eql? "DOC"
                                 errs.push "Value should be 0 or blank for DOC entries. value: #{csv_array[0][@position]}" if ( (csv_array[0][@position]).to_i > 0) unless csv_array[0][@position].nil?
@@ -249,8 +267,8 @@ def test_shipment_line input_line
                         @header_pos += 1
 
 			unless @line_eight
-                        	#harmonized_code char10 Only on line 9 lines
-                        	errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 10 }
+                        	#harmonized_code char8 or char10 Only on line 9 lines
+                        	errs.push perform_and_capture{ test_input_is_numeric_and_length csv_array, @position, headers[@header_pos], 8,10 } unless csv_array[0][@position].nil?
         	                @position += 1
 	                        @header_pos += 1
 			end
@@ -259,7 +277,7 @@ def test_shipment_line input_line
                         # @header_pos = @line_eight ? @position + 1:@position
 
                         #fda_prior_notice char12
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 12 }
+                        errs.push perform_and_capture{ test_input_is_numeric_and_length csv_array, @position, headers[@header_pos], 12 }  unless csv_array[0][@position].nil?
                         @position += 1
                         @header_pos += 1
 
@@ -405,10 +423,17 @@ def test_shipment_line input_line
                         @position += 1
                         @header_pos += 1
 
+				if lt >= 12  #headers.length == 49
+					##con_tax_id
+				   errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 40 } unless csv_array[0][@position].nil?
+                        @position += 1
+                        @header_pos += 1
+				end
+			
                         #comments char512
                         errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 512 }
                 else
-                        raise "Line Format does not match the format definition.  Only 8 or 9 lines are accepted."
+                        raise "Line Format does not match the format definition.  Only 8 , 9, 10, 11 or 12 lines are accepted."
                 end
 
                 raise "Errors found" unless errs.compact.empty?

@@ -22,10 +22,11 @@ $shipment_line_headers = ["record_type", "profile_key", "hawb", "ship_ref_num", 
 $shipment_line_9_header = "harmonized_code"
 $shipment_line_10_header = "service_provider"
 $shipment_line_11_header = "currency_code"
-$shipment_line_12_header = "con_tax_id"
+$shipment_line_12_header_taxid = "con_tax_id"
+$shipment_line_12_header_email = "con_email"
 
 #       Record the number of expected items in the end array.
-$line_type = { "8"=> 45, "9"=> 46, "10" => 47, "11" => 48, "12" => 49 }
+$line_type = { "8"=> 45, "9"=> 46, "10" => 47, "11" => 48, "12" => 50 }
 $debug = false
 
 #       print an array with index
@@ -155,7 +156,10 @@ def test_shipment_line input_line
 			headers.insert 18, $shipment_line_9_header
 			headers.insert 9, $shipment_line_10_header if lt >= 10
 			headers.insert 16, $shipment_line_11_header if lt >= 11
-			headers.insert 47, $shipment_line_12_header if lt >= 12
+			if lt >= 12
+				headers.insert 47, $shipment_line_12_header_email 
+				headers.insert 48, $shipment_line_12_header_taxid
+			end
 		end
 		puts "headers #{ $shipment_line_headers.length  } : #{ headers.length }" if $debug
 		#print_shipment_line csv_array, headers
@@ -423,7 +427,12 @@ def test_shipment_line input_line
                         @position += 1
                         @header_pos += 1
 
-				if lt >= 12  #headers.length == 49
+				if lt >= 12  #headers.length == 50
+					##con_email
+				   errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 255 } unless csv_array[0][@position].nil?
+                        @position += 1
+                        @header_pos += 1
+												
 					##con_tax_id
 				   errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 40 } unless csv_array[0][@position].nil?
                         @position += 1

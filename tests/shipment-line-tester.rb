@@ -225,7 +225,7 @@ class ShipmentLineTester < Test::Unit::TestCase
 		bad_emails.each do |input|
 			print_this input, "is an invalid email address"
 		        assert_raises(RuntimeError) {
-			        valid_email?( input, 'con_email' )
+			        raise_valid_email?( input, 'con_email' )
 		        }
 			end
 						
@@ -237,7 +237,7 @@ class ShipmentLineTester < Test::Unit::TestCase
 		good_emails.each do |input|
 			print_this input, "is a valid email address"
 		        assert_nothing_raised(RuntimeError) {
-			        valid_email?( input, 'con_email' )
+			        raise_valid_email?( input, 'con_email' )
 		        }
 			end			
 		puts

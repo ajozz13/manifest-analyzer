@@ -29,6 +29,13 @@ $shipment_line_12_header_email = "con_email"
 $line_type = { "8"=> 45, "9"=> 46, "10" => 47, "11" => 48, "12" => 50 }
 $debug = false
 
+$email_regex = %r{\A([\w+\-]\.?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+}xi
+
+def raise_valid_email? email_address, header
+        puts "Test address: #{email_address}" if $debug
+        raise "The email in #{header} '#{email_address}', may be invalid." unless ( email_address.strip =~ $email_regex ) == 0
+end
+
 #       print an array with index
 def print_array arr
         arr.each_with_index do |issue, index|
@@ -429,7 +436,10 @@ def test_shipment_line input_line
 
 				if lt >= 12  #headers.length == 50
 					##con_email
-				   errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 255 } unless csv_array[0][@position].nil?
+					unless csv_array[0][@position].nil?
+						errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 255 } 
+						errs.push perform_and_capture{ raise_valid_email? csv_array[0][@position], headers[@header_pos] } 
+					 end
                         @position += 1
                         @header_pos += 1
 												

@@ -192,8 +192,7 @@ class ShipmentLineTester < Test::Unit::TestCase
 		puts
         end
 				
-      def test_input_is_numeric_and_length_throws_exception
-                
+      def test_input_is_numeric_and_length_throws_exception             
                 input_list = [ ['2040608011111','12345678911a1'] ]             
 			max_length = 12
 			(0..1).each do |num|
@@ -207,8 +206,7 @@ class ShipmentLineTester < Test::Unit::TestCase
 		puts
         end	
 				
-	   def test_input_is_numeric_and_length_works
-                
+	   def test_input_is_numeric_and_length_works     
                 input_list = [ ['204060801111','123456789111'] ]             
 			max_length = 12
 			(0..1).each do |num|
@@ -220,7 +218,30 @@ class ShipmentLineTester < Test::Unit::TestCase
 			end
 						
 		puts
-        end			
+        end		
+				
+        def test_input_is_invalid_email
+		bad_emails = [ 'me/sap.com', 'bad-emailaddress.com', 'myfakemail.net', 'aaere3223sd' ]
+		bad_emails.each do |input|
+			print_this input, "is an invalid email address"
+		        assert_raises(RuntimeError) {
+			        valid_email?( input, 'con_email' )
+		        }
+			end
+						
+		puts
+        end	
+		 
+	def test_input_is_email_works
+		good_emails = [ 'aochoa@ibcinc.com', 'frank.martinez@venevicion.net', 'mikemartinez@arruga.net', 'joinme@join.me.ve', 'me124@me.com', 'long-email-address.express@pactrak.com']
+		good_emails.each do |input|
+			print_this input, "is a valid email address"
+		        assert_nothing_raised(RuntimeError) {
+			        valid_email?( input, 'con_email' )
+		        }
+			end			
+		puts
+        end	
 end	
 
 

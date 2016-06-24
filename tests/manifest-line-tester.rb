@@ -80,7 +80,7 @@ class ManifestLineTester < Test::Unit::TestCase
 	
 	#Test airline codes -	valid_airline_code? input_code  Should be like 'AA233' or 'LS2345'
 	def test_airline_codes_should_be_invalid
-		input_codes = [ 'A332', 'LS 3222', 'NO21']
+		input_codes = [ '1332', 'LS 3222', 'NO21']
 		input_codes.each do |input|
 			print_this input, "is an invalid airline code"
 			assert_equal false, valid_airline_code?( input )
@@ -90,7 +90,7 @@ class ManifestLineTester < Test::Unit::TestCase
 
 	#Test airline codes -	valid_airline_code? input_code  Should be like 'AA233' or 'LS2345'
 	def test_airline_codes_should_be_valid
-		input_codes = [ 'AA332', 'LS3222', 'NO0221']
+		input_codes = [ 'AA332', 'LS3222', 'NO0221', 'A4332']
 		input_codes.each do |input|
 			print_this input, "is a valid airline code"
 			assert_equal true, valid_airline_code?( input )

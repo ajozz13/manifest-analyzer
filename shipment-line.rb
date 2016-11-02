@@ -246,16 +246,18 @@ def test_shipment_line input_line
                         errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos], 3, "DOC,APX" }
                         @position += 1
                         @header_pos += 1
+			value_adj = 1
 												
-				if lt >= 11  #headers.length == 48
-					##currency_code
-				   errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 3 } unless csv_array[0][@position].nil?
-                        @position += 1
-                        @header_pos += 1
-				end
+			if lt >= 11  #headers.length == 48
+				##currency_code
+				errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 3 } unless csv_array[0][@position].nil?
+                        	@position += 1
+                        	@header_pos += 1
+				value_adj += 1
+			end
                         ##value should be null or 0 if DOC
-                        if csv_array[0][@position - 1].eql? "DOC"
-                                errs.push "Value should be 0 or blank for DOC entries. value: #{csv_array[0][@position]}" if ( (csv_array[0][@position]).to_i > 0) unless csv_array[0][@position].nil?
+                        if csv_array[0][@position - value_adj].eql? "DOC"
+                                errs.push "Value should be 0, 1 or blank for DOC entries. value: #{csv_array[0][@position]}" if ( (csv_array[0][@position]).to_i > 1) unless csv_array[0][@position].nil?
                         else
                                 ##value decimal(7,0)
                                 errs.push "Value should not be less than 1 or blank for APX" if csv_array[0][@position].nil? or (csv_array[0][@position].to_f < 1)
@@ -434,20 +436,20 @@ def test_shipment_line input_line
                         @position += 1
                         @header_pos += 1
 
-				if lt >= 12  #headers.length == 50
-					##con_email
-					unless csv_array[0][@position].nil?
-						errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 255 } 
-						errs.push perform_and_capture{ raise_valid_email? csv_array[0][@position], headers[@header_pos] } 
-					 end
-                        @position += 1
-                        @header_pos += 1
-												
-					##con_tax_id
-				   errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 40 } unless csv_array[0][@position].nil?
-                        @position += 1
-                        @header_pos += 1
+			if lt >= 12  #headers.length == 50
+				##con_email
+				unless csv_array[0][@position].nil?
+					errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 255 } 
+					errs.push perform_and_capture{ raise_valid_email? csv_array[0][@position], headers[@header_pos] } 
 				end
+                        	@position += 1
+                        	@header_pos += 1
+												
+				##con_tax_id
+				errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 40 } unless csv_array[0][@position].nil?
+                        	@position += 1
+                        	@header_pos += 1
+			end
 			
                         #comments char512
                         errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 512 }

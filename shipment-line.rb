@@ -10,7 +10,7 @@ require 'csv'
 $last_line_tested
 
 ##      Global Variables
-$shipment_line_headers = ["record_type", "profile_key", "hawb", "ship_ref_num", "second_ship_ref",
+$shipment_line_headers = ["record_type", "profile_key", "hawb", "ship_ref_num", "internal_reference",
   "vend_ref_num", "origin", "final_dest", "outlying", "dls_station", "dls_final_dest", "num_pieces",
   "weight", "weight_unit", "contents", "value", "insurance_amount", "description",
   "fda_prior_notice", "terms", "packaging", "service_type", "collect_amount", "cust_key",
@@ -150,12 +150,12 @@ end
 ##      Main function to call when tests are made
 ##      Unit tested with Test program below
 def test_shipment_line input_line
-	$last_line_tested = input_line
-        errs = []
-	headers = $shipment_line_headers.dup
-        begin
-                csv_array = CSV.parse( input_line )
-                print_array csv_array if $debug
+  $last_line_tested = input_line
+  errs = []
+  headers = $shipment_line_headers.dup
+  begin
+    csv_array = CSV.parse( input_line )
+    print_array csv_array if $debug
 
 		lt = Integer( csv_array[0][0] )
 
@@ -164,310 +164,310 @@ def test_shipment_line input_line
 			headers.insert 9, $shipment_line_10_header if lt >= 10
 			headers.insert 16, $shipment_line_11_header if lt >= 11
 			if lt >= 12
-				headers.insert 47, $shipment_line_12_header_email 
+				headers.insert 47, $shipment_line_12_header_email
 				headers.insert 48, $shipment_line_12_header_taxid
 			end
 		end
 		puts "headers #{ $shipment_line_headers.length  } : #{ headers.length }" if $debug
 		#print_shipment_line csv_array, headers
 
-                puts "Size is #{csv_array[0].size}" if $debug
-                if lt.between?(8,12)  
-                        unless confirm_line_size csv_array[0]
-                                raise "Size of input line (#{csv_array[0].size}) does not match expected size " \
-                                      "for a type #{csv_array[0][0]} line (#{$line_type[ csv_array[0][0] ]}). "
-                        end
-			# headers.length == 45 is 8,  headers.length == 46 is 9  headers.length == 47 is 10
-                        @line_eight = lt.eql? 8
+            puts "Size is #{csv_array[0].size}" if $debug
+            if lt.between?(8,12)
+              unless confirm_line_size csv_array[0]
+                raise "Size of input line (#{csv_array[0].size}) does not match expected size " \
+                      "for a type #{csv_array[0][0]} line (#{$line_type[ csv_array[0][0] ]}). "
+              end
+              # headers.length == 45 is 8,  headers.length == 46 is 9  headers.length == 47 is 10
+              @line_eight = lt.eql? 8
 
-                        ##BEGIN LINE TEST
-                        ##profile_key
-                        errs.push perform_and_capture{ should_be_blank csv_array, 1, headers[1]  }
+              ##BEGIN LINE TEST
+              ##profile_key
+              errs.push perform_and_capture{ should_be_blank csv_array, 1, headers[1]  }
 
-                        ##hawb  numeric and maxlength of 11
-                        errs.push perform_and_capture{ should_be_numeric csv_array, 2, headers[2] or test_nil_and_length csv_array[0][2], headers[2], 11 }
+              ##hawb  numeric and maxlength of 40
+              errs.push perform_and_capture{ should_be_numeric csv_array, 2, headers[2] or test_nil_and_length csv_array[0][2], headers[2], 40 }
 
-                        #ship_ref_num max_length 11
-                        errs.push perform_and_capture{ test_max_length csv_array[0][3], headers[3], 11 }
+              #ship_ref_num max_length 11
+              errs.push perform_and_capture{ test_max_length csv_array[0][3], headers[3], 11 }
 
-                        #second_ship_ref
-                        errs.push perform_and_capture{ test_max_length csv_array[0][4], headers[4], 22 }
+              #internal_reference max_length 40
+              errs.push perform_and_capture{ test_max_length csv_array[0][4], headers[4], 40 }
 
-                        #vend_ref_num
-                        errs.push perform_and_capture{ test_max_length csv_array[0][5], headers[5], 22 }
+              #vend_ref_num
+              errs.push perform_and_capture{ test_max_length csv_array[0][5], headers[5], 22 }
 
-                        #origin 3 letter char
-                        errs.push perform_and_capture{ should_be_char csv_array, 6, headers[6] or test_max_length csv_array[0][6], headers[6], 3 }
+              #origin 3 letter char
+              errs.push perform_and_capture{ should_be_char csv_array, 6, headers[6] or test_max_length csv_array[0][6], headers[6], 3 }
 
-                        #final_dest 3 letter char
-                        errs.push perform_and_capture{ should_be_char  csv_array, 7, headers[7] or test_max_length csv_array[0][7], headers[7], 3 }
+              #final_dest 3 letter char
+              errs.push perform_and_capture{ should_be_char  csv_array, 7, headers[7] or test_max_length csv_array[0][7], headers[7], 3 }
 
-                        #outlying X or nil
-                        errs.push perform_and_capture{ test_max_length csv_array[0][8], headers[8], 1 }
+              #outlying X or nil
+              errs.push perform_and_capture{ test_max_length csv_array[0][8], headers[8], 1 }
 
-			@position = 9
-			@header_pos = 9
-			if lt >= 10  #headers.length == 47
-				#service_provider 3 letter char
-                        	errs.push perform_and_capture{ should_be_char csv_array, @position, headers[@header_pos] or test_max_length csv_array[0][@position], headers[@header_pos], 3 } unless csv_array[0][@position].nil?
-                        @position += 1
-                        @header_pos += 1
-			end
+              @position = 9
+              @header_pos = 9
+              if lt >= 10  #headers.length == 47
+                #service_provider 3 letter char
+                errs.push perform_and_capture{ should_be_char csv_array, @position, headers[@header_pos] or test_max_length csv_array[0][@position], headers[@header_pos], 3 } unless csv_array[0][@position].nil?
+                @position += 1
+                @header_pos += 1
+              end
 
 
-                        #dls_station
-                        errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
-                        @position += 1
-                        @header_pos += 1
+              #dls_station
+              errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
+              @position += 1
+              @header_pos += 1
 
-                        #dls_final_dest
-                        errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
-                        @position += 1
-                        @header_pos += 1
+              #dls_final_dest
+              errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
+              @position += 1
+              @header_pos += 1
 
-                        ##num_pieces decimal(3,0)
-                        errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 3, 0 }
-                        errs.push "num_pieces should be at least 1" if ( csv_array[0][@position].to_f < 1 )
-                        @position += 1
-                        @header_pos += 1
-                        
-				  ##weight decimal
-                        errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 7, 2 }
-                        errs.push "weight should be greater than 0" unless ( csv_array[0][@position].to_f > 0 )
-                        @position += 1
-                        @header_pos += 1
+              ##num_pieces decimal(3,0)
+              errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 3, 0 }
+              errs.push "num_pieces should be at least 1" if ( csv_array[0][@position].to_f < 1 )
+              @position += 1
+              @header_pos += 1
 
-                        ##weight_unit
-                        errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos], 1, "P,K,G" }
-                        @position += 1
-                        @header_pos += 1
+              ##weight decimal
+              errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 7, 2 }
+              errs.push "weight should be greater than 0" unless ( csv_array[0][@position].to_f > 0 )
+              @position += 1
+              @header_pos += 1
 
-                        ##contents  DOC or APX
-                        errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos], 3, "DOC,APX" }
-                        @position += 1
-                        @header_pos += 1
-			value_adj = 1
-												
-			if lt >= 11  #headers.length == 48
-				##currency_code
-				errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 3 } unless csv_array[0][@position].nil?
-                        	@position += 1
-                        	@header_pos += 1
-				value_adj += 1
-			end
-                        ##value should be null or 0 if DOC
-                        if csv_array[0][@position - value_adj].eql? "DOC"
-                                errs.push "Value should be 0, 1 or blank for DOC entries. value: #{csv_array[0][@position]}" if ( (csv_array[0][@position]).to_i > 1) unless csv_array[0][@position].nil?
-                        else
-                                ##value decimal(7,0)
-                                errs.push "Value should not be less than 1 or blank for APX" if csv_array[0][@position].nil? or (csv_array[0][@position].to_f < 1)
-                                errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 7, 0 }
-                        end
-                        @position += 1
-                        @header_pos += 1
+              ##weight_unit
+              errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos], 1, "P,K,G" }
+              @position += 1
+              @header_pos += 1
 
-                        ##insurance_amount decimal(9,2)
-                        errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 9, 2 } unless csv_array[0][@position].nil?
-                        @position += 1
-                        @header_pos += 1
+              ##contents  DOC or APX
+              errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos], 3, "DOC,APX" }
+              @position += 1
+              @header_pos += 1
+              value_adj = 1
 
-                        #description char200
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 200 }
-                        if csv_array[0][14].eql? "APX"  ##description should not be blank.
-                                errs.push perform_and_capture{ should_not_be_blank csv_array, @position, headers[@header_pos], "APX Document type detected." }
-                        end
-                        @position += 1
-                        @header_pos += 1
+            	if lt >= 11  #headers.length == 48
+            		##currency_code
+            		errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 3 } unless csv_array[0][@position].nil?
+              	@position += 1
+              	@header_pos += 1
+            		value_adj += 1
+            	end
+              ##value should be null or 0 if DOC
+              if csv_array[0][@position - value_adj].eql? "DOC"
+                      errs.push "Value should be 0, 1 or blank for DOC entries. value: #{csv_array[0][@position]}" if ( (csv_array[0][@position]).to_i > 1) unless csv_array[0][@position].nil?
+              else
+                      ##value decimal(7,0)
+                      errs.push "Value should not be less than 1 or blank for APX" if csv_array[0][@position].nil? or (csv_array[0][@position].to_f < 1)
+                      errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 7, 0 }
+              end
+              @position += 1
+              @header_pos += 1
 
-			unless @line_eight
-                        	#harmonized_code char8 or char10 Only on line 9 lines
-                        	errs.push perform_and_capture{ test_input_is_numeric_and_length csv_array, @position, headers[@header_pos], 8,10 } unless csv_array[0][@position].nil?
-        	                @position += 1
-	                        @header_pos += 1
-			end
-                        ##adjust position depending on the line type
-                        # @position = @line_eight ? 19:20
-                        # @header_pos = @line_eight ? @position + 1:@position
+              ##insurance_amount decimal(9,2)
+              errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 9, 2 } unless csv_array[0][@position].nil?
+              @position += 1
+              @header_pos += 1
 
-                        #fda_prior_notice char12
-                        errs.push perform_and_capture{ test_input_is_numeric_and_length csv_array, @position, headers[@header_pos], 12 }  unless csv_array[0][@position].nil?
-                        @position += 1
-                        @header_pos += 1
+              #description char200
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 200 }
+              if csv_array[0][14].eql? "APX"  ##description should not be blank.
+                      errs.push perform_and_capture{ should_not_be_blank csv_array, @position, headers[@header_pos], "APX Document type detected." }
+              end
+              @position += 1
+              @header_pos += 1
 
-                        #terms
-                        errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos], 1, "P,C,S,F" }
-                        @position += 1
-                        @header_pos += 1
+             unless @line_eight
+              	#harmonized_code char8 or char10 Only on line 9 lines
+              	errs.push perform_and_capture{ test_input_is_numeric_and_length csv_array, @position, headers[@header_pos], 8,10 } unless csv_array[0][@position].nil?
+                @position += 1
+                @header_pos += 1
+              end
+              ##adjust position depending on the line type
+              # @position = @line_eight ? 19:20
+              # @header_pos = @line_eight ? @position + 1:@position
 
-                        #packaging
-                        errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos],1, "L,P,B,T,C,M,O" }
-                        @position += 1
-                        @header_pos += 1
+              #fda_prior_notice char12
+              errs.push perform_and_capture{ test_input_is_numeric_and_length csv_array, @position, headers[@header_pos], 12 }  unless csv_array[0][@position].nil?
+              @position += 1
+              @header_pos += 1
 
-                        #service_type
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 2 }
-                        @position += 1
-                        @header_pos += 1
+              #terms
+              errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos], 1, "P,C,S,F" }
+              @position += 1
+              @header_pos += 1
 
-                        #collect_amount should only appear if terms (@position - 3) is C
-                        if csv_array[0][@position - 3].eql? "C"
-                                if csv_array[0][@position].nil?
-                                        errs.push "The terms are Collect, and the value data supplied collect_amount is empty."
-                                else
-                                        errs.push "Collect value should be numeric and greater than 0. collect value: #{csv_array[0][@position]}" unless (csv_array[0][@position].to_f > 0)
-                                        errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 7, 2 }
-                                end
-                        else
-                                #collect_amount when terms are not C
-                                errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
-                        end
-                        @position += 1
-                        @header_pos += 1
+              #packaging
+              errs.push perform_and_capture{ should_be_in_list csv_array, @position, headers[@header_pos],1, "L,P,B,T,C,M,O" }
+              @position += 1
+              @header_pos += 1
 
-                        #cust_key should be blank
-                        errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
-                        @position += 1
-                        @header_pos += 1
+              #service_type
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 2 }
+              @position += 1
+              @header_pos += 1
 
-                        #ship_acct_num char4 Position 25 (if line 9)
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 4 }
-                        @position += 1
-                        @header_pos += 1
+              #collect_amount should only appear if terms (@position - 3) is C
+              if csv_array[0][@position - 3].eql? "C"
+                      if csv_array[0][@position].nil?
+                              errs.push "The terms are Collect, and the value data supplied collect_amount is empty."
+                      else
+                              errs.push "Collect value should be numeric and greater than 0. collect value: #{csv_array[0][@position]}" unless (csv_array[0][@position].to_f > 0)
+                              errs.push perform_and_capture{ should_be_decimal csv_array, @position, headers[@header_pos], 7, 2 }
+                      end
+              else
+                      #collect_amount when terms are not C
+                      errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
+              end
+              @position += 1
+              @header_pos += 1
 
-                        #dls_acct_num blank
-                        errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
-                        @position += 1
-                        @header_pos += 1
+              #cust_key should be blank
+              errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
+              @position += 1
+              @header_pos += 1
 
-                        #ext_cust_acct blank
-                        errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
-                        @position += 1
-                        @header_pos += 1
+              #ship_acct_num char4 Position 25 (if line 9)
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 4 }
+              @position += 1
+              @header_pos += 1
 
-                        ##SHIPPER INFO
+              #dls_acct_num blank
+              errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
+              @position += 1
+              @header_pos += 1
 
-                        #shipper_name char30
-                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 30 }
-                        @position += 1
-                        @header_pos += 1
+              #ext_cust_acct blank
+              errs.push perform_and_capture{ should_be_blank csv_array, @position, headers[@header_pos] }
+              @position += 1
+              @header_pos += 1
 
-                        #shipper_address1 char25
-                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 25 }
-                        @position += 1
-                        @header_pos += 1
+              ##SHIPPER INFO
 
-                        #shipper_address2 char25
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 25 }
-                        @position += 1
-                        @header_pos += 1
+              #shipper_name char30
+              errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 30 }
+              @position += 1
+              @header_pos += 1
 
-                        #shipper_city char25
-                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 25 }
-                        @position += 1
-                        @header_pos += 1
+              #shipper_address1 char25
+              errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 25 }
+              @position += 1
+              @header_pos += 1
 
-                        #shipper_state char2
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 2 }
-                        @position += 1
-                        @header_pos += 1
+              #shipper_address2 char25
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 25 }
+              @position += 1
+              @header_pos += 1
 
-                        #shipper_zip char10
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 10 }
-                        @position += 1
-                        @header_pos += 1
+              #shipper_city char25
+              errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 25 }
+              @position += 1
+              @header_pos += 1
 
-                        #shipper_country char2 FOR AAMS
-                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 2 }
-                        @position += 1
-                        @header_pos += 1
+              #shipper_state char2
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 2 }
+              @position += 1
+              @header_pos += 1
 
-                        #shipper_phone char15
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 15 }
-                        @position += 1
-                        @header_pos += 1
+              #shipper_zip char10
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 10 }
+              @position += 1
+              @header_pos += 1
 
-                        ##CONSIGNEE INFO
+              #shipper_country char2 FOR AAMS
+              errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 2 }
+              @position += 1
+              @header_pos += 1
 
-                        #con_person char35
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 35 }
-                        con_name = csv_array[0][@position].to_s.strip
-                        @position += 1
-                        @header_pos += 1
+              #shipper_phone char15
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 15 }
+              @position += 1
+              @header_pos += 1
 
-                        #con_company char35
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 35 }
-                        con_comp = csv_array[0][@position].to_s.strip
-                        errs.push "You must supply either a name( con_name ) or a company( con_company ) for the Consignee." if con_name.empty? and con_comp.empty?
-                        @position += 1
-                        @header_pos += 1
+              ##CONSIGNEE INFO
 
-                        #con_street_1 char35
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 35 }
-                        @position += 1
-                        @header_pos += 1
+              #con_person char35
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 35 }
+              con_name = csv_array[0][@position].to_s.strip
+              @position += 1
+              @header_pos += 1
 
-                        #con_street_2 char35
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 35 }
-                        @position += 1
-                        @header_pos += 1
+              #con_company char35
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 35 }
+              con_comp = csv_array[0][@position].to_s.strip
+              errs.push "You must supply either a name( con_name ) or a company( con_company ) for the Consignee." if con_name.empty? and con_comp.empty?
+              @position += 1
+              @header_pos += 1
 
-                        #con_city char35
-                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 35 }
-                        @position += 1
-                        @header_pos += 1
+              #con_street_1 char35
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 35 }
+              @position += 1
+              @header_pos += 1
 
-                        #con_state char20
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 20 }
-                        @position += 1
-                        @header_pos += 1
+              #con_street_2 char35
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 35 }
+              @position += 1
+              @header_pos += 1
 
-                        #con_postal_code char20
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 20 }
-                        @position += 1
-                        @header_pos += 1
+              #con_city char35
+              errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 35 }
+              @position += 1
+              @header_pos += 1
 
-                        #con_country char2 FOR AAMS
-                        errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 2 }
-                        @position += 1
-                        @header_pos += 1
+              #con_state char20
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 20 }
+              @position += 1
+              @header_pos += 1
 
-                        #con_phone char20
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 20 }
-                        @position += 1
-                        @header_pos += 1
+              #con_postal_code char20
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 20 }
+              @position += 1
+              @header_pos += 1
 
-			if lt >= 12  #headers.length == 50
-				##con_email
-				unless csv_array[0][@position].nil?
-					errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 255 } 
-					errs.push perform_and_capture{ raise_valid_email? csv_array[0][@position], headers[@header_pos] } 
-				end
-                        	@position += 1
-                        	@header_pos += 1
-												
-				##con_tax_id
-				errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 40 } unless csv_array[0][@position].nil?
-                        	@position += 1
-                        	@header_pos += 1
-			end
-			
-                        #comments char512
-                        errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 512 }
-                else
-                        raise "Line Format does not match the format definition.  Only 8 , 9, 10, 11 or 12 lines are accepted."
+              #con_country char2 FOR AAMS
+              errs.push perform_and_capture{ test_nil_and_length csv_array[0][@position], headers[@header_pos], 2 }
+              @position += 1
+              @header_pos += 1
+
+              #con_phone char20
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 20 }
+              @position += 1
+              @header_pos += 1
+
+              if lt >= 12  #headers.length == 50
+                ##con_email
+                unless csv_array[0][@position].nil?
+                	errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 255 }
+                	errs.push perform_and_capture{ raise_valid_email? csv_array[0][@position], headers[@header_pos] }
                 end
+              	@position += 1
+              	@header_pos += 1
 
-                raise "Errors found" unless errs.compact.empty?
-                @completed = true
+                ##con_tax_id
+                errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 40 } unless csv_array[0][@position].nil?
+                @position += 1
+                @header_pos += 1
+              end
 
-        rescue Exception => e
-                puts "Shipment Line Issue: #{ e.message }"
-                print_array errs.compact
-		puts "---------------------------------"
-                print_shipment_line csv_array, headers
-                puts "Backtrace: #{ e.backtrace }" if $debug
-                @completed = false
-        end
+              #comments char512
+              errs.push perform_and_capture{ test_max_length csv_array[0][@position], headers[@header_pos], 512 }
+            else
+              raise "Line Format does not match the format definition.  Only 8 , 9, 10, 11 or 12 lines are accepted."
+            end
+
+            raise "Errors found" unless errs.compact.empty?
+            @completed = true
+
+    rescue Exception => e
+      puts "Shipment Line Issue: #{ e.message }"
+      print_array errs.compact
+      puts "---------------------------------"
+      print_shipment_line csv_array, headers
+      puts "Backtrace: #{ e.backtrace }" if $debug
+      @completed = false
+    end
 end
 
 ##	Accept an array of entries and test them
@@ -475,12 +475,12 @@ end
 def test_entries entries_string
 	count = 0
 	entries_string.split("\n").each_with_index do | line, index |
-		count = count + run_test( index) { test_shipment_line line } 
+		count = count + run_test( index) { test_shipment_line line }
 	end
 	return count
 end
 
-##	Perform the line test and report back if the test failed with a 1 or if it passed 
+##	Perform the line test and report back if the test failed with a 1 or if it passed
 def run_test index
 	passed = yield
 	puts "Line #{ index + 1 } did not pass validation" unless passed

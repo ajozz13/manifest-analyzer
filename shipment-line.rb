@@ -127,7 +127,7 @@ def should_be_in_list input_arr, position, header, max_length, accepted_list
         unless (should_be_char input_arr, position, header or
                         test_max_length input_arr[0][position], header, max_length)
                 arr = accepted_list.split(",")
-                raise "Input of: '#{input_arr[0][position]}' is not a valid option for #{ $shipment_line_headers[ header ] }" unless arr.include? input_arr[0][position].strip
+                raise "Input of: '#{input_arr[0][position]}' is not a valid option for #{ header }" unless arr.include? input_arr[0][position].strip
         end
 end
 
